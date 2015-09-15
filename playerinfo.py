@@ -15,12 +15,10 @@ class PlayerTracking(object):
         headers = response.json()['resultSets'][0]['headers']
         headers = [x.encode('latin-1') for x in headers]
         self.player_bio_df = pd.DataFrame(raw_player_data, columns = headers)
-    
-    # Returns dictionary with key for Player ID and value for Player Name
         player_ids_df = self.player_bio_df[['PLAYER_ID', 'PLAYER_NAME']]
         self.player_ids = player_ids_df.set_index('PLAYER_ID').to_dict()['PLAYER_NAME']
-
-    #return player_ids_df.to_dict()
+        
+    # This function returns shot log given a player_id as a data frame
     def get_player_shot_log(self, player_id):
         shot_log_url = 'http://stats.nba.com/stats/playerdashptshotlog?DateFrom=&DateTo=&GameSegment=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&Period=0&PlayerID='+ str(player_id) +'&Season=2014-15&SeasonSegment=&SeasonType=Regular+Season&TeamID=0&VsConference=&VsDivision='
         response = requests.get(shot_log_url)
@@ -32,10 +30,4 @@ class PlayerTracking(object):
         shot_log_df.insert(0, "PLAYER_ID", player_id)
         return shot_log_df
     
-'''test = PlayerTracking("2014-15")
-print list(test.player_bio_df.columns.values)
-print test.player_ids[2744]
-shot_log = test.get_player_shot_log(2744)
-print shot_log
-#print shot_log.loc[shot_log['PTS_TYPE'] == 3]
-'''
+
